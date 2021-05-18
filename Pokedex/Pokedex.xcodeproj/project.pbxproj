@@ -18,7 +18,6 @@
 		9A06CF3D265452C1008ACE8D /* PokedexUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A06CF3C265452C1008ACE8D /* PokedexUITests.swift */; };
 		9A06CF4E265453D1008ACE8D /* Dependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A06CF4D265453D1008ACE8D /* Dependencies.swift */; };
 		9A06CF53265453FC008ACE8D /* DataContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A06CF52265453FC008ACE8D /* DataContainer.swift */; };
-		9A06CF602654554E008ACE8D /* Data Model in Resources */ = {isa = PBXBuildFile; fileRef = 9A06CF5F2654554E008ACE8D /* Data Model */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,7 +55,6 @@
 		9A06CF3E265452C1008ACE8D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9A06CF4D265453D1008ACE8D /* Dependencies.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dependencies.swift; sourceTree = "<group>"; };
 		9A06CF52265453FC008ACE8D /* DataContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataContainer.swift; sourceTree = "<group>"; };
-		9A06CF5F2654554E008ACE8D /* Data Model */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Data Model"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,7 +108,6 @@
 				9A06CF6C265455A7008ACE8D /* Views */,
 				9A06CF6826545594008ACE8D /* View Controllers */,
 				9A06CF672654557E008ACE8D /* Classes */,
-				9A06CF5F2654554E008ACE8D /* Data Model */,
 				9A06CF17265452C0008ACE8D /* AppDelegate.swift */,
 				9A06CF19265452C0008ACE8D /* SceneDelegate.swift */,
 				9A06CF1D265452C0008ACE8D /* Main.storyboard */,
@@ -268,7 +265,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9A06CF27265452C1008ACE8D /* LaunchScreen.storyboard in Resources */,
-				9A06CF602654554E008ACE8D /* Data Model in Resources */,
 				9A06CF24265452C1008ACE8D /* Assets.xcassets in Resources */,
 				9A06CF1F265452C0008ACE8D /* Main.storyboard in Resources */,
 			);

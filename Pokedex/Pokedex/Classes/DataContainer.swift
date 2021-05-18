@@ -48,4 +48,16 @@ public class DataContainer : NSPersistentContainer{
 
     // fetch request here
     
+    func fetchPokemon(type : Int){
+        
+    }
+    
+    func testStuff(){
+        let bg = self.newBackgroundContext()
+        self.saveContext(backgroundContext: bg)
+        self.performBackgroundTask { (managedObjContext) in
+            let fetchReq = NSFetchRequest<NSFetchRequestResult>(entityName: "Pokemon")
+        }
+    }
+    
 }

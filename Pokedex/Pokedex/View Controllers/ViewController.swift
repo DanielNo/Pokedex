@@ -17,6 +17,7 @@ class ViewController: UIViewController {
             dataContainer?.saveContext()
 
         }
+        dataContainer?.testStuff()
     }
     
 

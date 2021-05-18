@@ -16,9 +16,9 @@ extension Pokemon {
         return NSFetchRequest<Pokemon>(entityName: "Pokemon")
     }
 
+    @NSManaged public var id: Int16
     @NSManaged public var name: String?
     @NSManaged public var type: Int16
-    @NSManaged public var id: Int16
 
 }
 
