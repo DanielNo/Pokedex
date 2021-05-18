@@ -17,6 +17,7 @@
 		9A06CF3D265452C1008ACE8D /* PokedexUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A06CF3C265452C1008ACE8D /* PokedexUITests.swift */; };
 		9A06CF4E265453D1008ACE8D /* Dependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A06CF4D265453D1008ACE8D /* Dependencies.swift */; };
 		9A06CF53265453FC008ACE8D /* DataContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A06CF52265453FC008ACE8D /* DataContainer.swift */; };
+		9AB8826B2654866B00630E6B /* Pokemon.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9AB882692654866B00630E6B /* Pokemon.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		9A06CF3E265452C1008ACE8D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9A06CF4D265453D1008ACE8D /* Dependencies.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dependencies.swift; sourceTree = "<group>"; };
 		9A06CF52265453FC008ACE8D /* DataContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataContainer.swift; sourceTree = "<group>"; };
+		9AB8826A2654866B00630E6B /* Pokemon.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Pokemon.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 				9A06CF17265452C0008ACE8D /* AppDelegate.swift */,
 				9A06CF19265452C0008ACE8D /* SceneDelegate.swift */,
 				9A06CF1D265452C0008ACE8D /* Main.storyboard */,
+				9AB882692654866B00630E6B /* Pokemon.xcdatamodeld */,
 				9A06CF23265452C1008ACE8D /* Assets.xcassets */,
 				9A06CF25265452C1008ACE8D /* LaunchScreen.storyboard */,
 				9A06CF28265452C1008ACE8D /* Info.plist */,
@@ -293,6 +296,7 @@
 				9A06CF4E265453D1008ACE8D /* Dependencies.swift in Sources */,
 				9A06CF1A265452C0008ACE8D /* SceneDelegate.swift in Sources */,
 				9A06CF53265453FC008ACE8D /* DataContainer.swift in Sources */,
+				9AB8826B2654866B00630E6B /* Pokemon.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -619,6 +623,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		9AB882692654866B00630E6B /* Pokemon.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				9AB8826A2654866B00630E6B /* Pokemon.xcdatamodel */,
+			);
+			currentVersion = 9AB8826A2654866B00630E6B /* Pokemon.xcdatamodel */;
+			path = Pokemon.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 9A06CF0C265452BF008ACE8D /* Project object */;
 }

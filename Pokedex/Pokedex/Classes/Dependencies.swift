@@ -11,7 +11,7 @@ import CoreData
 public final class Dependencies{
     lazy var dataContainer : DataContainer? = {
         let objectModel = NSManagedObjectModel()
-        return DataContainer(name: "Pokedex", managedObjectModel: objectModel)
+        return DataContainer(name: "Pokemon", managedObjectModel: objectModel)
     }()
     
     
