@@ -8,6 +8,7 @@
 import Foundation
 
 public enum Type : Int{
+    case none = -1
     case normal = 0
     case fire = 1
     case water = 2
@@ -67,6 +68,8 @@ extension Type{
 //            return [.ghost,.psychic]
 //        case .steel:
 //            return []
+        case .none:
+            return []
         }
 
     }
@@ -109,6 +112,8 @@ extension Type{
 //            return []
 //        case .steel:
 //            return []
+        case .none:
+            return []
         }
     }
     
@@ -150,6 +155,8 @@ extension Type{
 //            return []
 //        case .steel:
 //            return []
+        case .none:
+            return []
         }
     }
 
@@ -196,6 +203,8 @@ extension Type : CustomStringConvertible{
 //            return "Dark"
 //        case .steel:
 //            return "Steel"
+        case .none:
+            return "None"
         }
     }
 }
