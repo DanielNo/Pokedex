@@ -939,7 +939,8 @@ public class PokemonData{
             "type":Type.normal.rawValue,
             "subtype":Type.none.rawValue,
             "devolution":-1,
-            "evolution":-1
+            "evolution":-1,
+            "multievo":[134,135,136]
            ],
             ["name":"Vaporeon",
             "id":134,

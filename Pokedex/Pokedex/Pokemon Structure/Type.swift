@@ -122,13 +122,13 @@ extension Type{
         case .normal:
             return []
         case .fire:
-            return []
+            return [.grass]
         case .water:
-            return []
+            return [.fire]
         case .grass:
-            return []
+            return [.water]
         case .electric:
-            return []
+            return [.water]
         case .flying:
             return [.normal]
         case .dragon:

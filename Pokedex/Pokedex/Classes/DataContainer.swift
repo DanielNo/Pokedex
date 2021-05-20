@@ -27,6 +27,9 @@ public class DataContainer : NSPersistentContainer{
                 fatalError("unable to load persistent stores")
             }else{
                 print("core data stores loaded!")
+                self.viewContext.automaticallyMergesChangesFromParent = true
+                self.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
+                self.importInitialPokemonData()
             }
             
         }
@@ -47,10 +50,51 @@ public class DataContainer : NSPersistentContainer{
     }
 
     // fetch request here
-    
-    func fetchPokemon(type : Int){
+/*
+    ["name":"Arbok",
+    "id":24,
+    "type":Type.poison.rawValue,
+    "subtype":Type.none.rawValue,
+    "devolution":23,
+    "evolution":-1
+   ]
+ */
+    func importInitialPokemonData(){
+        let data = PokemonData.init().info
+        for dict in data{
+            let pokemon = Pokemon(context: self.viewContext)
+            if let name = dict["name"] as? String{
+                pokemon.name = name
+            }
+            if let id = dict["id"] as? Int16{
+                pokemon.id = id
+            }
+            if let type = dict["type"] as? Int16{
+                pokemon.type = type
+            }
+            if let subtype = dict["subtype"] as? Int16{
+                pokemon.subtype = subtype
+            }
+            if let devo = dict["devolution"] as? Int16{
+                pokemon.devolution = devo
+            }
+            if let evo = dict["evolution"] as? Int16{
+                pokemon.evolution = evo
+            }
+
+
+        }
         
+        self.saveContext()
     }
+        
+    func fetchPokemonRequest() -> NSFetchRequest<Pokemon>{
+        let fetchRequest = NSFetchRequest<Pokemon>(entityName: "Pokemon")
+        let sortDescriptor = NSSortDescriptor(key: "id", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        return fetchRequest
+    }
+
     
     func testStuff(){
         let bg = self.newBackgroundContext()

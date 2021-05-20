@@ -6,19 +6,37 @@
 //
 
 import UIKit
+import CoreData
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, NSFetchedResultsControllerDelegate {
     let dataContainer = Dependencies.sharedDependencies.dataContainer
-
+    var fetchedResultsController: NSFetchedResultsController<Pokemon>!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        if let con = dataContainer{
-            dataContainer?.saveContext()
+        initializeFetchedResultsController()
+    }
+    
+    func initializeFetchedResultsController() {
+        if let request = dataContainer?.fetchPokemonRequest(){
+            
+            if let moc = dataContainer?.viewContext{
+                fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: moc, sectionNameKeyPath: nil, cacheName: nil)
+                fetchedResultsController.delegate = self
+                let objs = fetchedResultsController.fetchedObjects
+
+            }
+            
+            do {
+                try fetchedResultsController.performFetch()
+            } catch {
+                fatalError("Failed to initialize FetchedResultsController: \(error)")
+            }
 
         }
-        dataContainer?.testStuff()
     }
+
     
 
 
