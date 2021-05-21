@@ -15,13 +15,16 @@ NSPersistentContainer is intended to be subclassed. Your subclass is a convenien
 */
 
 public class DataContainer : NSPersistentContainer{
-
     public override init(name: String, managedObjectModel model: NSManagedObjectModel) {
         super.init(name: name, managedObjectModel: model)
-//        self.setupCoreDataStack()
+        self.setupCoreDataStack()
     }
     
     public func setupCoreDataStack(){
+        // Used this to fix preloading.
+        // https://stackoverflow.com/questions/40093585/swift-3-preload-from-sql-files-in-appdelegate/40107699
+        // Make sure file exists before loading stores.
+        self.loadInitialFile()
         self.loadPersistentStores{ desc, error in
             if let err = error{
                 fatalError("unable to load persistent stores")
@@ -29,7 +32,6 @@ public class DataContainer : NSPersistentContainer{
                 print("core data stores loaded!")
                 self.viewContext.automaticallyMergesChangesFromParent = true
                 self.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
-                self.importInitialPokemonData()
             }
         }
     }
@@ -48,20 +50,13 @@ public class DataContainer : NSPersistentContainer{
         }
     }
 
-    // fetch request here
-/*
-    ["name":"Arbok",
-    "id":24,
-    "type":Type.poison.rawValue,
-    "subtype":Type.none.rawValue,
-    "devolution":23,
-    "evolution":-1
-   ]
- */
-    func importInitialPokemonData(){
-        /*
-        let data = PokemonData.init().info
-        for dict in data{
+}
+
+// Data preloading
+extension DataContainer{
+    // Prepopulate Core Data from dictionary and save it.
+    func prepopulateCoreDataEntries(_ fromDict:[[String:Any]] = PokemonData.init().info){
+        for dict in fromDict{
             let pokemon = Pokemon(context: self.viewContext)
             if let name = dict["name"] as? String{
                 pokemon.name = name
@@ -83,37 +78,25 @@ public class DataContainer : NSPersistentContainer{
             }
         }
         self.saveContext()
-        */
-        self.loadInitialFile()
     }
-    
-    func getDocumentsDirectory()-> URL {
-        let paths = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
-        let documentsDirectory = paths[0]
-        return documentsDirectory
-    }
-    
+            
     func loadInitialFile(){
-        let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        let url = self.getDocumentsDirectory().appendingPathComponent("Pokemon.sqlite")
-        
-        if !FileManager.default.fileExists(atPath: url.path) {
-            let sourceURL = Bundle.main.url(forResource: "Pokemon", withExtension: "sqlite")!
-
+        let storeURL = try! FileManager
+                .default
+                .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                .appendingPathComponent("Pokemon.sqlite")
+        if let sqlFile = Bundle.main.path(forResource: "Pokemon", ofType: "sqlite"){
+            let url = URL(fileURLWithPath: sqlFile)
             do {
-                try FileManager.default.copyItem(at: sourceURL, to: url)
-            } catch let error as NSError {
-                print("Unresolved error: \(error.userInfo)")
+                print("copying file")
+                try FileManager.default.copyItem(at: url, to: storeURL)
+            } catch let error {
+                print("error copying sql file : \(error.localizedDescription)")
             }
-        }else{
-            print("file exists")
         }
         
-        do {
-            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
-        } catch let error as NSError {
-            print("Unresolved error: \(error.userInfo)")
-        }
+        let storeDescription = NSPersistentStoreDescription(url: storeURL)
+        self.persistentStoreDescriptions = [storeDescription]
     }
 
 }

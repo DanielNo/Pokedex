@@ -20,6 +20,7 @@
 		9AB882A12655996C00630E6B /* Type.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB882A02655996C00630E6B /* Type.swift */; };
 		9AB882AE2655A93800630E6B /* PokemonData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB882AD2655A93800630E6B /* PokemonData.swift */; };
 		9AB882C02656CE6000630E6B /* Pokemon.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9AB882BE2656CE6000630E6B /* Pokemon.xcdatamodeld */; };
+		9AB882EE26586FA600630E6B /* Pokemon.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 9AB882ED26586FA500630E6B /* Pokemon.sqlite */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		9AB882A02655996C00630E6B /* Type.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Type.swift; sourceTree = "<group>"; };
 		9AB882AD2655A93800630E6B /* PokemonData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonData.swift; sourceTree = "<group>"; };
 		9AB882BF2656CE6000630E6B /* Pokemon.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Pokemon.xcdatamodel; sourceTree = "<group>"; };
+		9AB882ED26586FA500630E6B /* Pokemon.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = Pokemon.sqlite; path = ../../../Desktop/Archive/Pokemon.sqlite; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 		9A06CF16265452BF008ACE8D /* Pokedex */ = {
 			isa = PBXGroup;
 			children = (
+				9AB882ED26586FA500630E6B /* Pokemon.sqlite */,
 				9AB8829F2655995000630E6B /* Pokemon Structure */,
 				9AB8827C265592D500630E6B /* Core Data */,
 				9A06CF6C265455A7008ACE8D /* Views */,
@@ -289,6 +292,7 @@
 				9A06CF27265452C1008ACE8D /* LaunchScreen.storyboard in Resources */,
 				9A06CF24265452C1008ACE8D /* Assets.xcassets in Resources */,
 				9A06CF1F265452C0008ACE8D /* Main.storyboard in Resources */,
+				9AB882EE26586FA600630E6B /* Pokemon.sqlite in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
