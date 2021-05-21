@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Type : Int{
+public enum Type : Int16{
     case none = -1
     case normal = 0
     case fire = 1

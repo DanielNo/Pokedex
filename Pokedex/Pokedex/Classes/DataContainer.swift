@@ -15,10 +15,10 @@ NSPersistentContainer is intended to be subclassed. Your subclass is a convenien
 */
 
 public class DataContainer : NSPersistentContainer{
-    
+
     public override init(name: String, managedObjectModel model: NSManagedObjectModel) {
         super.init(name: name, managedObjectModel: model)
-        self.setupCoreDataStack()
+//        self.setupCoreDataStack()
     }
     
     public func setupCoreDataStack(){
@@ -31,7 +31,6 @@ public class DataContainer : NSPersistentContainer{
                 self.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
                 self.importInitialPokemonData()
             }
-            
         }
     }
     
@@ -60,6 +59,7 @@ public class DataContainer : NSPersistentContainer{
    ]
  */
     func importInitialPokemonData(){
+        /*
         let data = PokemonData.init().info
         for dict in data{
             let pokemon = Pokemon(context: self.viewContext)
@@ -81,27 +81,61 @@ public class DataContainer : NSPersistentContainer{
             if let evo = dict["evolution"] as? Int16{
                 pokemon.evolution = evo
             }
+        }
+        self.saveContext()
+        */
+        self.loadInitialFile()
+    }
+    
+    func getDocumentsDirectory()-> URL {
+        let paths = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
+        let documentsDirectory = paths[0]
+        return documentsDirectory
+    }
+    
+    func loadInitialFile(){
+        let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
+        let url = self.getDocumentsDirectory().appendingPathComponent("Pokemon.sqlite")
+        
+        if !FileManager.default.fileExists(atPath: url.path) {
+            let sourceURL = Bundle.main.url(forResource: "Pokemon", withExtension: "sqlite")!
 
-
+            do {
+                try FileManager.default.copyItem(at: sourceURL, to: url)
+            } catch let error as NSError {
+                print("Unresolved error: \(error.userInfo)")
+            }
+        }else{
+            print("file exists")
         }
         
-        self.saveContext()
+        do {
+            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
+        } catch let error as NSError {
+            print("Unresolved error: \(error.userInfo)")
+        }
     }
-        
+
+}
+
+extension DataContainer{
     func fetchPokemonRequest() -> NSFetchRequest<Pokemon>{
         let fetchRequest = NSFetchRequest<Pokemon>(entityName: "Pokemon")
         let sortDescriptor = NSSortDescriptor(key: "id", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
         return fetchRequest
     }
+    
+    func fetchPokemonRequest(_ type : Type) -> NSFetchRequest<Pokemon>{
+        let fetchRequest = NSFetchRequest<Pokemon>(entityName: "Pokemon")
+        let pred = NSPredicate(format: "type == \(type.rawValue)")
+//        let pred = NSPredicate(format: "type == %i", type.rawValue)
+        fetchRequest.predicate = pred
+        let sortDescriptor = NSSortDescriptor(key: "type", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        fetchRequest.returnsObjectsAsFaults = false
+        return fetchRequest
 
-    
-    func testStuff(){
-        let bg = self.newBackgroundContext()
-        self.saveContext(backgroundContext: bg)
-        self.performBackgroundTask { (managedObjContext) in
-            let fetchReq = NSFetchRequest<NSFetchRequestResult>(entityName: "Pokemon")
-        }
     }
-    
+
 }
