@@ -8,62 +8,14 @@
 import UIKit
 import CoreData
 
-class ViewController: UIViewController {
+class ViewController: UICollectionViewController {
     let dataContainer = Dependencies.sharedDependencies.dataContainer
     var fetchedResultsController: NSFetchedResultsController<Pokemon>!
     
-//    var collectionView : UICollectionView = {
-//        let cv = UICollectionView(frame: .zero)
-//        cv.translatesAutoresizingMaskIntoConstraints = false
-//        cv.collectionViewLayout = UICollectionViewCompositionalLayout(sectionProvider: { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
-//          let isPhone = layoutEnvironment.traitCollection.userInterfaceIdiom == UIUserInterfaceIdiom.phone
-//          let size = NSCollectionLayoutSize(
-//            widthDimension: NSCollectionLayoutDimension.fractionalWidth(1),
-//            heightDimension: NSCollectionLayoutDimension.absolute(isPhone ? 280 : 250)
-//          )
-//          let itemCount = isPhone ? 1 : 3
-//          let item = NSCollectionLayoutItem(layoutSize: size)
-//          let group = NSCollectionLayoutGroup.horizontal(layoutSize: size, subitem: item, count: itemCount)
-//          let section = NSCollectionLayoutSection(group: group)
-//          section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
-//          section.interGroupSpacing = 10
-//          // Supplementary header view setup
-//          let headerFooterSize = NSCollectionLayoutSize(
-//            widthDimension: .fractionalWidth(1.0),
-//            heightDimension: .estimated(20)
-//          )
-//          let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-//            layoutSize: headerFooterSize,
-//            elementKind: UICollectionView.elementKindSectionHeader,
-//            alignment: .top
-//          )
-//          section.boundarySupplementaryItems = [sectionHeader]
-//          return section
-//        })
-//        return cv
-//    }()
-    
-    
-    
-    var collectionView : UICollectionView = {
-        let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.estimatedItemSize = CGSize(width: 100, height: 100)
-        flowLayout.itemSize = CGSize(width: 100, height: 100)
-        flowLayout.scrollDirection = .horizontal
-        flowLayout.minimumInteritemSpacing = 20.0
-        flowLayout.minimumLineSpacing = 10
-        flowLayout.headerReferenceSize = CGSize(width: 100, height: 100)
-        flowLayout.footerReferenceSize = CGSize(width: 100, height: 100)
-
-        let cv = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        cv.translatesAutoresizingMaskIntoConstraints = false
-        return cv
-    }()
-
-    
-    lazy var dataSource : UICollectionViewDiffableDataSource<Section,Pokemon> = {
-        let datasource : UICollectionViewDiffableDataSource<Section,Pokemon> = UICollectionViewDiffableDataSource(collectionView: self.collectionView) { (colView, indexPath, pokemon) -> UICollectionViewCell? in
-            let cell = colView.dequeueReusableCell(withReuseIdentifier: PokemonCollectionViewCell.identifier, for: indexPath)
+    lazy var dataSource : UICollectionViewDiffableDataSource<Section,NSManagedObjectID> = {
+        let datasource : UICollectionViewDiffableDataSource<Section,NSManagedObjectID> = UICollectionViewDiffableDataSource(collectionView: self.collectionView) { (colView, indexPath, objectID) -> UICollectionViewCell? in
+            let cell = colView.dequeueReusableCell(withReuseIdentifier: PokemonCollectionViewCell.identifier, for: indexPath) as! PokemonCollectionViewCell
+            cell.imageView.image = UIImage(named: "1")
             return cell
         }
         
@@ -77,24 +29,38 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.collectionView.register(UINib(nibName: "PokemonCollectionViewCell", bundle: .main), forCellWithReuseIdentifier: PokemonCollectionViewCell.identifier)
         // Do any additional setup after loading the view.
         collectionView.dataSource = self.dataSource
-        collectionView.delegate = self
         initializeFetchedResultsController()
+//        self.applySnapshot()
     }
+
+    
+    func applySnapshot(animatingDifferences: Bool = true) {
+      // 2
+      var snapshot = NSDiffableDataSourceSnapshot<Section,NSManagedObjectID>()
+      // 3
+      snapshot.appendSections([.main])
+      // 4
+      snapshot.appendItems([])
+      // 5
+      dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
+    }
+
 }
 
 extension ViewController : NSFetchedResultsControllerDelegate{
     func initializeFetchedResultsController() {
         if let request = dataContainer?.fetchPokemonRequest(){
             if let moc = dataContainer?.viewContext{
-                fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: moc, sectionNameKeyPath: nil, cacheName: "pokemon-cache")
+                fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: moc, sectionNameKeyPath: nil, cacheName: nil)
                 fetchedResultsController.delegate = self
             }
             
             do {
-                let fetchedPokemon = try dataContainer?.newBackgroundContext().fetch(request) as! [Pokemon]
-                print("\(fetchedPokemon.count) entries")
+//                let fetchedPokemon = try dataContainer?.newBackgroundContext().fetch(request) as! [Pokemon]
+//                print("\(fetchedPokemon.count) entries")
                 try fetchedResultsController.performFetch()
             } catch {
                 fatalError("Failed to initialize FetchedResultsController: \(error)")
@@ -104,14 +70,40 @@ extension ViewController : NSFetchedResultsControllerDelegate{
     }
     
     // MARK: NSFetchedResultsControllerDelegate
+    
+    // New NSFetchedResultsControllerDelegate method to use with diffableDataSource.
+    // If this method is implemented, no other delegate methods will be invoked according to documentation
+    // This makes diffableDataSource usable alongside existing implementations for older ios versions.
+    @available(iOS 13.0, *)
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+        guard let dataSource = self.collectionView.dataSource as? UICollectionViewDiffableDataSource<Section, NSManagedObjectID> else {
+            assertionFailure("The data source has not implemented snapshot support while it should")
+            return
+        }
+        var snapshot = snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>
+        let currentSnapshot = dataSource.snapshot() as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>
 
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        tableView.beginUpdates()
+        let reloadIdentifiers: [NSManagedObjectID] = snapshot.itemIdentifiers.compactMap { itemIdentifier in
+            guard let currentIndex = currentSnapshot.indexOfItem(itemIdentifier), let index = snapshot.indexOfItem(itemIdentifier), index == currentIndex else {
+                return nil
+            }
+            guard let existingObject = try? controller.managedObjectContext.existingObject(with: itemIdentifier), existingObject.isUpdated else { return nil }
+            return itemIdentifier
+        }
+        snapshot.reloadItems(reloadIdentifiers)
+
+        let shouldAnimate = self.collectionView.numberOfSections != 0
+        dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>, animatingDifferences: shouldAnimate)
     }
     
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-//        tableView.endUpdates()
-    }
+
+//    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+////        tableView.beginUpdates()
+//    }
+//
+//    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+////        tableView.endUpdates()
+//    }
     
     // Row Changes (optional methods)
     /*
@@ -145,10 +137,7 @@ extension ViewController : NSFetchedResultsControllerDelegate{
 
 }
 
-extension ViewController : UICollectionViewDelegate,UICollectionViewDelegateFlowLayout{
-    
-    
-    
+extension ViewController : UICollectionViewDelegateFlowLayout{
     
     
 }

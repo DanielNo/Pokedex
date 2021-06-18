@@ -10,6 +10,8 @@ import UIKit
 class PokemonCollectionViewCell: UICollectionViewCell {
     static let identifier = "pokemonCell"
 
+    @IBOutlet weak var imageView: UIImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
