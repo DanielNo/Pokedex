@@ -24,7 +24,7 @@ public class DataContainer : NSPersistentContainer{
         // Used this to fix preloading.
         // https://stackoverflow.com/questions/40093585/swift-3-preload-from-sql-files-in-appdelegate/40107699
         // Make sure file exists before loading stores.
-        self.loadInitialFile()
+//        self.loadInitialFile()
         self.loadPersistentStores{ desc, error in
             if let err = error{
                 fatalError("unable to load persistent stores")
@@ -32,6 +32,10 @@ public class DataContainer : NSPersistentContainer{
                 print("core data stores loaded!")
                 self.viewContext.automaticallyMergesChangesFromParent = true
                 self.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
+                // Uncomment to create sqlite db
+//                self.prepopulateCoreDataEntries()
+                self.loadInitialFile()
+
             }
         }
     }
@@ -56,35 +60,43 @@ public class DataContainer : NSPersistentContainer{
 extension DataContainer{
     // Prepopulate Core Data from dictionary and save it.
     func prepopulateCoreDataEntries(_ fromDict:[[String:Any]] = PokemonData.init().info){
-        for dict in fromDict{
-            let pokemon = Pokemon(context: self.viewContext)
-            if let name = dict["name"] as? String{
-                pokemon.name = name
+        let bgContext = self.newBackgroundContext()
+        bgContext.perform {
+            for dict in fromDict{
+                let pokemon = NSEntityDescription.insertNewObject(forEntityName: "Pokemon", into: bgContext) as! Pokemon
+//                let pokemon = Pokemon(context: self.viewContext)
+                if let name = dict["name"] as? String{
+                    pokemon.name = name
+                }
+                if let id = dict["id"] as? Int{
+                    let idNum = Int16(id)
+                    pokemon.id = idNum
+                }
+                if let type = dict["type"] as? Int16{
+                    pokemon.type = type
+                }
+                if let subtype = dict["subtype"] as? Int16{
+                    pokemon.subtype = subtype
+                }
+                if let devo = dict["devolution"] as? Int16{
+                    pokemon.devolution = devo
+                }
+                if let evo = dict["evolution"] as? Int16{
+                    pokemon.evolution = evo
+                }
             }
-            if let id = dict["id"] as? Int16{
-                pokemon.id = id
-            }
-            if let type = dict["type"] as? Int16{
-                pokemon.type = type
-            }
-            if let subtype = dict["subtype"] as? Int16{
-                pokemon.subtype = subtype
-            }
-            if let devo = dict["devolution"] as? Int16{
-                pokemon.devolution = devo
-            }
-            if let evo = dict["evolution"] as? Int16{
-                pokemon.evolution = evo
-            }
+
         }
-        self.saveContext()
+        self.saveContext(backgroundContext: bgContext)
     }
-            
+    
+    // load local pokemon.sqlite file
     func loadInitialFile(){
         let storeURL = try! FileManager
                 .default
                 .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
                 .appendingPathComponent("Pokemon.sqlite")
+        print(storeURL)
         if let sqlFile = Bundle.main.path(forResource: "Pokemon", ofType: "sqlite"){
             let url = URL(fileURLWithPath: sqlFile)
             do {
@@ -118,7 +130,6 @@ extension DataContainer{
         fetchRequest.sortDescriptors = [sortDescriptor]
         fetchRequest.returnsObjectsAsFaults = false
         return fetchRequest
-
     }
 
 }

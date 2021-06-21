@@ -17,7 +17,7 @@
 		9A06CF3D265452C1008ACE8D /* PokedexUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A06CF3C265452C1008ACE8D /* PokedexUITests.swift */; };
 		9A06CF4E265453D1008ACE8D /* Dependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A06CF4D265453D1008ACE8D /* Dependencies.swift */; };
 		9A06CF53265453FC008ACE8D /* DataContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A06CF52265453FC008ACE8D /* DataContainer.swift */; };
-		9A8432D7266825D100F818CD /* Pokemon.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 9A8432D6266825D100F818CD /* Pokemon.sqlite */; };
+		9A449471267D734800FF531A /* Pokemon.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 9A449470267D734800FF531A /* Pokemon.sqlite */; };
 		9AAF43D3265D7369005CE4AC /* PokemonCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAF43D1265D7369005CE4AC /* PokemonCollectionViewCell.swift */; };
 		9AAF43D4265D7369005CE4AC /* PokemonCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9AAF43D2265D7369005CE4AC /* PokemonCollectionViewCell.xib */; };
 		9AB882A12655996C00630E6B /* Type.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB882A02655996C00630E6B /* Type.swift */; };
@@ -59,7 +59,7 @@
 		9A06CF3E265452C1008ACE8D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9A06CF4D265453D1008ACE8D /* Dependencies.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dependencies.swift; sourceTree = "<group>"; };
 		9A06CF52265453FC008ACE8D /* DataContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataContainer.swift; sourceTree = "<group>"; };
-		9A8432D6266825D100F818CD /* Pokemon.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = Pokemon.sqlite; path = "../../../Documents/Pokemon Images/Archive/Pokemon.sqlite"; sourceTree = "<group>"; };
+		9A449470267D734800FF531A /* Pokemon.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = Pokemon.sqlite; path = ../../../Desktop/Pokemon.sqlite; sourceTree = "<group>"; };
 		9AAF43D1265D7369005CE4AC /* PokemonCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonCollectionViewCell.swift; sourceTree = "<group>"; };
 		9AAF43D2265D7369005CE4AC /* PokemonCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PokemonCollectionViewCell.xib; sourceTree = "<group>"; };
 		9AB882A02655996C00630E6B /* Type.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Type.swift; sourceTree = "<group>"; };
@@ -115,7 +115,7 @@
 		9A06CF16265452BF008ACE8D /* Pokedex */ = {
 			isa = PBXGroup;
 			children = (
-				9A8432D6266825D100F818CD /* Pokemon.sqlite */,
+				9A449470267D734800FF531A /* Pokemon.sqlite */,
 				9AB8829F2655995000630E6B /* Pokemon Structure */,
 				9AB8827C265592D500630E6B /* Core Data */,
 				9A06CF6C265455A7008ACE8D /* Views */,
@@ -297,7 +297,7 @@
 			files = (
 				9A06CF27265452C1008ACE8D /* LaunchScreen.storyboard in Resources */,
 				9A06CF24265452C1008ACE8D /* Assets.xcassets in Resources */,
-				9A8432D7266825D100F818CD /* Pokemon.sqlite in Resources */,
+				9A449471267D734800FF531A /* Pokemon.sqlite in Resources */,
 				9A06CF1F265452C0008ACE8D /* Main.storyboard in Resources */,
 				9AAF43D4265D7369005CE4AC /* PokemonCollectionViewCell.xib in Resources */,
 			);

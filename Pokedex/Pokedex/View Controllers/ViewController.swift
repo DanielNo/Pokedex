@@ -15,7 +15,11 @@ class ViewController: UICollectionViewController {
     lazy var dataSource : UICollectionViewDiffableDataSource<Section,NSManagedObjectID> = {
         let datasource : UICollectionViewDiffableDataSource<Section,NSManagedObjectID> = UICollectionViewDiffableDataSource(collectionView: self.collectionView) { (colView, indexPath, objectID) -> UICollectionViewCell? in
             let cell = colView.dequeueReusableCell(withReuseIdentifier: PokemonCollectionViewCell.identifier, for: indexPath) as! PokemonCollectionViewCell
-            cell.imageView.image = UIImage(named: "1")
+//            print(objectID)
+            let obj = self.dataContainer?.viewContext.object(with: objectID) as! Pokemon
+            let id = obj.id
+//            print(id)
+            cell.imageView.image = UIImage(named: "\(id)")
             return cell
         }
         
@@ -59,9 +63,13 @@ extension ViewController : NSFetchedResultsControllerDelegate{
             }
             
             do {
-//                let fetchedPokemon = try dataContainer?.newBackgroundContext().fetch(request) as! [Pokemon]
-//                print("\(fetchedPokemon.count) entries")
+                let fetchedPokemon = try dataContainer?.newBackgroundContext().fetch(request) as! [Pokemon]
+                print("\(fetchedPokemon.count) entries")
                 try fetchedResultsController.performFetch()
+                if let fetched = fetchedResultsController.fetchedObjects{
+//                    print(fetched)
+                }
+                
             } catch {
                 fatalError("Failed to initialize FetchedResultsController: \(error)")
             }
@@ -96,6 +104,7 @@ extension ViewController : NSFetchedResultsControllerDelegate{
         dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>, animatingDifferences: shouldAnimate)
     }
     
+    // Legacy implementation
 
 //    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
 ////        tableView.beginUpdates()
