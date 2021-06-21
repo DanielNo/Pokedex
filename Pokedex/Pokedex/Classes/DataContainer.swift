@@ -20,6 +20,7 @@ public class DataContainer : NSPersistentContainer{
         self.setupCoreDataStack()
     }
     
+    // TODO: Fix preloading
     public func setupCoreDataStack(){
         // Used this to fix preloading.
         // https://stackoverflow.com/questions/40093585/swift-3-preload-from-sql-files-in-appdelegate/40107699
@@ -34,7 +35,7 @@ public class DataContainer : NSPersistentContainer{
                 self.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
                 // Uncomment to create sqlite db
 //                self.prepopulateCoreDataEntries()
-                self.loadInitialFile()
+//                self.loadInitialFile()
 
             }
         }
@@ -86,8 +87,9 @@ extension DataContainer{
                 }
             }
 
+            self.saveContext(backgroundContext: bgContext)
+
         }
-        self.saveContext(backgroundContext: bgContext)
     }
     
     // load local pokemon.sqlite file
@@ -125,6 +127,21 @@ extension DataContainer{
         let fetchRequest = NSFetchRequest<Pokemon>(entityName: "Pokemon")
         let pred = NSPredicate(format: "type == \(type.rawValue)")
 //        let pred = NSPredicate(format: "type == %i", type.rawValue)
+        fetchRequest.predicate = pred
+        let sortDescriptor = NSSortDescriptor(key: "type", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        fetchRequest.returnsObjectsAsFaults = false
+        return fetchRequest
+    }
+    
+    func fetchPokemonRequest(_ name : String,_ type : Type) -> NSFetchRequest<Pokemon>{
+        let fetchRequest = NSFetchRequest<Pokemon>(entityName: "Pokemon")
+        var pred : NSPredicate
+        if type == .all{
+            pred = NSPredicate(format: "type < \(type.rawValue) AND name LIKE[cd] %@",name)
+        }else{
+            pred = NSPredicate(format: "type == \(type.rawValue) AND name LIKE[cd] %@",name)
+        }
         fetchRequest.predicate = pred
         let sortDescriptor = NSSortDescriptor(key: "type", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]

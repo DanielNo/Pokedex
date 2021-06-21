@@ -27,6 +27,7 @@ public enum Type : Int16{
     case rock = 15
 //    case dark = 16
 //    case steel = 17
+    case all = 99
 }
 
 extension Type{
@@ -70,6 +71,9 @@ extension Type{
 //            return []
         case .none:
             return []
+        case .all:
+            return []
+
         }
 
     }
@@ -114,6 +118,9 @@ extension Type{
 //            return []
         case .none:
             return []
+        case .all:
+            return []
+
         }
     }
     
@@ -157,6 +164,9 @@ extension Type{
 //            return []
         case .none:
             return []
+        case .all:
+            return []
+
         }
     }
 
@@ -205,6 +215,9 @@ extension Type : CustomStringConvertible{
 //            return "Steel"
         case .none:
             return "None"
+        case .all:
+            return "All"
+
         }
     }
 }

@@ -11,6 +11,14 @@ import CoreData
 class ViewController: UICollectionViewController {
     let dataContainer = Dependencies.sharedDependencies.dataContainer
     var fetchedResultsController: NSFetchedResultsController<Pokemon>!
+    lazy var searchController : UISearchController = {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search for pokemon"
+        return searchController
+    }()
+    
     
     lazy var dataSource : UICollectionViewDiffableDataSource<Section,NSManagedObjectID> = {
         let datasource : UICollectionViewDiffableDataSource<Section,NSManagedObjectID> = UICollectionViewDiffableDataSource(collectionView: self.collectionView) { (colView, indexPath, objectID) -> UICollectionViewCell? in
@@ -36,19 +44,18 @@ class ViewController: UICollectionViewController {
         self.collectionView.register(UINib(nibName: "PokemonCollectionViewCell", bundle: .main), forCellWithReuseIdentifier: PokemonCollectionViewCell.identifier)
         // Do any additional setup after loading the view.
         collectionView.dataSource = self.dataSource
+        self.applySnapshot()
         initializeFetchedResultsController()
+        self.navigationItem.searchController = searchController
+
 //        self.applySnapshot()
     }
 
     
     func applySnapshot(animatingDifferences: Bool = true) {
-      // 2
       var snapshot = NSDiffableDataSourceSnapshot<Section,NSManagedObjectID>()
-      // 3
       snapshot.appendSections([.main])
-      // 4
       snapshot.appendItems([])
-      // 5
       dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
     }
 
@@ -56,11 +63,9 @@ class ViewController: UICollectionViewController {
 
 extension ViewController : NSFetchedResultsControllerDelegate{
     func initializeFetchedResultsController() {
-        if let request = dataContainer?.fetchPokemonRequest(){
-            if let moc = dataContainer?.viewContext{
+        if let request = dataContainer?.fetchPokemonRequest(), let moc = dataContainer?.viewContext{
                 fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: moc, sectionNameKeyPath: nil, cacheName: nil)
                 fetchedResultsController.delegate = self
-            }
             
             do {
                 let fetchedPokemon = try dataContainer?.newBackgroundContext().fetch(request) as! [Pokemon]
@@ -70,8 +75,8 @@ extension ViewController : NSFetchedResultsControllerDelegate{
 //                    print(fetched)
                 }
                 
-            } catch {
-                fatalError("Failed to initialize FetchedResultsController: \(error)")
+            } catch let err{
+                print(err.localizedDescription)
             }
 
         }
@@ -82,26 +87,27 @@ extension ViewController : NSFetchedResultsControllerDelegate{
     // New NSFetchedResultsControllerDelegate method to use with diffableDataSource.
     // If this method is implemented, no other delegate methods will be invoked according to documentation
     // This makes diffableDataSource usable alongside existing implementations for older ios versions.
+    // Simplest way to implement this method is to apply the "snapshot variable" to the collectionview's datasource.
     @available(iOS 13.0, *)
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
         guard let dataSource = self.collectionView.dataSource as? UICollectionViewDiffableDataSource<Section, NSManagedObjectID> else {
             assertionFailure("The data source has not implemented snapshot support while it should")
             return
         }
-        var snapshot = snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>
-        let currentSnapshot = dataSource.snapshot() as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>
-
-        let reloadIdentifiers: [NSManagedObjectID] = snapshot.itemIdentifiers.compactMap { itemIdentifier in
-            guard let currentIndex = currentSnapshot.indexOfItem(itemIdentifier), let index = snapshot.indexOfItem(itemIdentifier), index == currentIndex else {
-                return nil
-            }
-            guard let existingObject = try? controller.managedObjectContext.existingObject(with: itemIdentifier), existingObject.isUpdated else { return nil }
-            return itemIdentifier
-        }
-        snapshot.reloadItems(reloadIdentifiers)
-
-        let shouldAnimate = self.collectionView.numberOfSections != 0
-        dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>, animatingDifferences: shouldAnimate)
+//        var snapshot = snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>
+//        let currentSnapshot = dataSource.snapshot() as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>
+//
+//        let reloadIdentifiers: [NSManagedObjectID] = snapshot.itemIdentifiers.compactMap { itemIdentifier in
+//            guard let currentIndex = currentSnapshot.indexOfItem(itemIdentifier), let index = snapshot.indexOfItem(itemIdentifier), index == currentIndex else {
+//                return nil
+//            }
+//            guard let existingObject = try? controller.managedObjectContext.existingObject(with: itemIdentifier), existingObject.isUpdated else { return nil }
+//            return itemIdentifier
+//        }
+//        snapshot.reloadItems(reloadIdentifiers)
+//
+//        let shouldAnimate = self.collectionView.numberOfSections != 0
+        dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>, animatingDifferences: true)
     }
     
     // Legacy implementation
@@ -147,6 +153,44 @@ extension ViewController : NSFetchedResultsControllerDelegate{
 }
 
 extension ViewController : UICollectionViewDelegateFlowLayout{
+    
+    
+}
+
+extension ViewController : UISearchControllerDelegate{
+    
+    
+    
+}
+
+extension ViewController : UISearchResultsUpdating{
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let text = searchController.searchBar.text?.lowercased(), let container = dataContainer else{
+            return
+        }
+        
+        if (text.count >= 2) {
+            self.fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "name CONTAINS[cd] %@",text)
+        }else{
+            self.fetchedResultsController.fetchRequest.predicate = nil
+        }
+        do {
+            try self.fetchedResultsController.performFetch()
+            
+            guard let dataSource = self.collectionView.dataSource as? UICollectionViewDiffableDataSource<Section, NSManagedObjectID>, let fetched = self.fetchedResultsController.fetchedObjects else {
+                return
+            }
+            var items = fetched.compactMap {
+                return $0.objectID
+            }
+
+            var snapshot = NSDiffableDataSourceSnapshot<Section,NSManagedObjectID>()
+            snapshot.appendSections([.main])
+            snapshot.appendItems(items)
+            dataSource.apply(snapshot, animatingDifferences: true)
+        } catch {}
+
+    }
     
     
 }
