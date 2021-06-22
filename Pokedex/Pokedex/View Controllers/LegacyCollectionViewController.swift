@@ -8,7 +8,7 @@
 import UIKit
 import CoreData
 
-class ViewController: UICollectionViewController {
+class LegacyCollectionViewController: UICollectionViewController {
     let dataContainer = Dependencies.sharedDependencies.dataContainer
     var fetchedResultsController: NSFetchedResultsController<Pokemon>!
     lazy var searchController : UISearchController = {
@@ -28,7 +28,6 @@ class ViewController: UICollectionViewController {
             let id = obj.id
 //            print(id)
             cell.imageView.image = UIImage(named: "\(id)")
-            cell.backgroundColor = .systemRed
             return cell
         }
         
@@ -39,21 +38,11 @@ class ViewController: UICollectionViewController {
       case main
     }
     
-    var originalItems : [NSManagedObjectID] {
-        get{
-            return self.fetchedResultsController.fetchedObjects?.compactMap {
-                return $0.objectID
-            } ?? []
+    var filteredItems : [Pokemon] = []
 
-        }
-        
-    }
-
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCollectionView()
-        self.applySnapshot()
         initializeFetchedResultsController()
         self.navigationItem.searchController = searchController
     }
@@ -61,7 +50,6 @@ class ViewController: UICollectionViewController {
     func setupCollectionView(){
         self.collectionView.register(UINib(nibName: "PokemonCollectionViewCell", bundle: .main), forCellWithReuseIdentifier: PokemonCollectionViewCell.identifier)
         // Do any additional setup after loading the view.
-        collectionView.dataSource = self.dataSource
         let flowLayout = UICollectionViewFlowLayout()
 //        flowLayout.itemSize = CGSize(width: 195, height: 200)
         flowLayout.minimumLineSpacing = 0.0
@@ -73,17 +61,9 @@ class ViewController: UICollectionViewController {
 
     }
 
-    
-    func applySnapshot(animatingDifferences: Bool = true) {
-      var snapshot = NSDiffableDataSourceSnapshot<Section,NSManagedObjectID>()
-      snapshot.appendSections([.main])
-      snapshot.appendItems([])
-      dataSource.apply(snapshot, animatingDifferences: false)
-    }
-
 }
 
-extension ViewController : NSFetchedResultsControllerDelegate{
+extension LegacyCollectionViewController : NSFetchedResultsControllerDelegate{
     func initializeFetchedResultsController() {
         if let request = dataContainer?.fetchPokemonRequest(), let moc = dataContainer?.viewContext{
                 fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: moc, sectionNameKeyPath: nil, cacheName: nil)
@@ -106,75 +86,33 @@ extension ViewController : NSFetchedResultsControllerDelegate{
     
     // MARK: NSFetchedResultsControllerDelegate
     
-    // New NSFetchedResultsControllerDelegate method to use with diffableDataSource.
-    // If this method is implemented, no other delegate methods will be invoked according to documentation
-    // This makes diffableDataSource usable alongside existing implementations for older ios versions.
-    // Simplest way to implement this method is to apply the "snapshot variable" to the collectionview's datasource.
-    @available(iOS 13.0, *)
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        guard let dataSource = self.collectionView.dataSource as? UICollectionViewDiffableDataSource<Section, NSManagedObjectID> else {
-            assertionFailure("The data source has not implemented snapshot support while it should")
-            return
-        }
-//        var snapshot = snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>
-//        let currentSnapshot = dataSource.snapshot() as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>
-//
-//        let reloadIdentifiers: [NSManagedObjectID] = snapshot.itemIdentifiers.compactMap { itemIdentifier in
-//            guard let currentIndex = currentSnapshot.indexOfItem(itemIdentifier), let index = snapshot.indexOfItem(itemIdentifier), index == currentIndex else {
-//                return nil
-//            }
-//            guard let existingObject = try? controller.managedObjectContext.existingObject(with: itemIdentifier), existingObject.isUpdated else { return nil }
-//            return itemIdentifier
-//        }
-//        snapshot.reloadItems(reloadIdentifiers)
-//
-//        let shouldAnimate = self.collectionView.numberOfSections != 0
-        dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>, animatingDifferences: false)
-    }
     
     // Legacy implementation
 
-//    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-////        tableView.beginUpdates()
-//    }
-//
-//    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-////        tableView.endUpdates()
-//    }
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        
+    }
+
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        self.collectionView.reloadData()
+    }
     
     // Row Changes (optional methods)
-    /*
+    
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        switch type {
-        case .delete:
-//            self.tableView.deleteRows(at: [indexPath!], with: .fade)
-        case .insert:
-//            self.tableView.insertRows(at: [newIndexPath!], with: .fade)
-        case .move:
-//            self.tableView.moveRow(at: indexPath!, to: newIndexPath!)
-        case .update:
-//            self.tableView.reloadRows(at: [indexPath!], with: .fade)
-        @unknown default:
-            print("unknown future case")
-        }
+        
     }
     
     // Section Cahnges
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
         let indexSet = IndexSet(integer: sectionIndex)
-        switch type {
-        case .insert: tableView.insertSections(indexSet, with: .fade)
-        case .delete: tableView.deleteSections(indexSet, with: .fade)
-        case .update, .move:
-            fatalError("Invalid change type in controller(_:didChange:atSectionIndex:for:). Only .insert or .delete should be possible.")
-        }
     }
- */
+ 
 
 }
 
-extension ViewController : UICollectionViewDelegateFlowLayout{
+extension LegacyCollectionViewController : UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let numberOfItemsPerRow : CGFloat = 3.0
         let w : CGFloat = CGFloat(UIScreen.main.bounds.width/numberOfItemsPerRow)
@@ -185,37 +123,65 @@ extension ViewController : UICollectionViewDelegateFlowLayout{
     
 }
 
-extension ViewController : UISearchControllerDelegate{
+extension LegacyCollectionViewController : UISearchControllerDelegate{
     
     
 }
+extension LegacyCollectionViewController {
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PokemonCollectionViewCell.identifier, for: indexPath) as! PokemonCollectionViewCell
+        
+        if let fetched = self.fetchedResultsController.fetchedObjects{
+            var results : [Pokemon]
+            if filteredItems.count > 0{
+                results = filteredItems
+            }else{
+                results = fetched
+            }
+            let pokemon = results[indexPath.row]
+            let id = pokemon.id
+            cell.imageView.image = UIImage(named: "\(id)")
+            cell.backgroundColor = .systemYellow
+            return cell
+        }else{
+            return UICollectionViewCell()
+        }
+    }
+}
 
-extension ViewController : UISearchResultsUpdating{
+// MARK: UICollectionViewDataSource
+extension LegacyCollectionViewController{
+    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if filteredItems.count > 0{
+            return filteredItems.count
+        }else{
+            return self.fetchedResultsController.fetchedObjects?.count ?? 0
+        }
+    }
+}
+
+extension LegacyCollectionViewController : UISearchResultsUpdating{
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text?.lowercased(), let fetched = self.fetchedResultsController.fetchedObjects else{
             return
         }
-        var items : [NSManagedObjectID] = []
         if text.count == 0{
-            items = self.originalItems
+            filteredItems = []
         }else{
-            let filteredItems = fetched.filter { pokemon in
+            let searchMatches = fetched.filter { pokemon in
                 if let name = pokemon.name?.lowercased(){
                     return name.contains(text)
                 }else{
                     return false
                 }
-            }.compactMap {
-                return $0.objectID
             }
-            items = filteredItems
+            filteredItems = searchMatches
         }
-        
-        var snapshot = NSDiffableDataSourceSnapshot<Section,NSManagedObjectID>()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(items)
-        dataSource.apply(snapshot, animatingDifferences: true)
-
+        collectionView.reloadData()
     }
     
     

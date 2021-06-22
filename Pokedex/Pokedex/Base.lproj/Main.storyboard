@@ -4,6 +4,7 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -19,6 +20,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="boQ-oJ-uyf" kind="relationship" relationship="viewControllers" id="umg-Vi-vWO"/>
+                        <segue destination="MUA-UJ-5ET" kind="relationship" relationship="viewControllers" id="ctp-7h-amK"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VhX-8z-07v" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -37,7 +39,7 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="MU5-gD-Rjm" kind="relationship" relationship="rootViewController" id="oqT-6Y-eDd"/>
+                        <segue destination="MU5-gD-Rjm" kind="relationship" relationship="rootViewController" id="qjS-QN-Y5z"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zX3-Ef-l2x" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -69,6 +71,60 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GD2-zz-g7d" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1829" y="117"/>
+        </scene>
+        <!--Legacy Collection View Controller-->
+        <scene sceneID="20J-Pb-Fvd">
+            <objects>
+                <collectionViewController id="dek-of-mXU" customClass="LegacyCollectionViewController" customModule="Pokedex" customModuleProvider="target" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="nDZ-7e-2Sz">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="9br-Be-lFP">
+                            <size key="itemSize" width="128" height="128"/>
+                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        </collectionViewFlowLayout>
+                        <cells>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="x5S-Nk-xpa">
+                                <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="n3s-6Z-Dj2">
+                                    <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </collectionViewCellContentView>
+                            </collectionViewCell>
+                        </cells>
+                        <connections>
+                            <outlet property="dataSource" destination="dek-of-mXU" id="AX1-3B-wah"/>
+                            <outlet property="delegate" destination="dek-of-mXU" id="Jf3-R2-GXt"/>
+                        </connections>
+                    </collectionView>
+                    <navigationItem key="navigationItem" id="DK0-gF-5Wc"/>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="GNM-aM-GQl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1842.0289855072465" y="-556.47321428571422"/>
+        </scene>
+        <!--Item-->
+        <scene sceneID="aPY-8y-wpi">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="MUA-UJ-5ET" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Item" id="m94-8R-6xe"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="SSc-bT-nau">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="dek-of-mXU" kind="relationship" relationship="rootViewController" id="9Nm-gs-yrO"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="W6I-Qi-EAn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="931.88405797101461" y="-556.47321428571422"/>
         </scene>
     </scenes>
     <resources>
