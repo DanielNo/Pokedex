@@ -34,7 +34,15 @@ public class DataContainer : NSPersistentContainer{
                 self.viewContext.automaticallyMergesChangesFromParent = true
                 self.viewContext.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
                 // Uncomment to create sqlite db
-//                self.prepopulateCoreDataEntries()
+                if !self.didPreloadCoreData(){
+                    self.prepopulateCoreDataEntries()
+                    let defaults = UserDefaults()
+                    defaults.setValue(true, forKey: self.preloadKey)
+                    defaults.synchronize()
+                    print("preloading core data")
+                }else{
+                    print("using preloaded data")
+                }
 //                self.loadInitialFile()
 
             }
@@ -53,6 +61,15 @@ public class DataContainer : NSPersistentContainer{
         } catch let error as NSError {
             print("Error: \(error), \(error.userInfo)")
         }
+    }
+    
+    // TODO: Make this more robust
+    let preloadKey = "didPreloadCoreData"
+    func didPreloadCoreData() -> Bool{
+        let defaults = UserDefaults()
+        defaults.register(defaults: [preloadKey : false])
+        let didPreload = defaults.bool(forKey: preloadKey)
+        return didPreload
     }
 
 }

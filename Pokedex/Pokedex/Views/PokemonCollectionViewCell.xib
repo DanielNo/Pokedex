@@ -17,24 +17,24 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="200"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1I9-BA-liR">
-                        <rect key="frame" x="80" y="2" width="160" height="196"/>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1I9-BA-liR">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="200"/>
                     </imageView>
                 </subviews>
             </view>
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <color key="backgroundColor" systemColor="systemPinkColor"/>
             <constraints>
-                <constraint firstItem="1I9-BA-liR" firstAttribute="height" secondItem="gTV-IL-0wX" secondAttribute="height" multiplier="0.98" id="Ba2-OJ-M7e"/>
-                <constraint firstItem="1I9-BA-liR" firstAttribute="width" secondItem="gTV-IL-0wX" secondAttribute="width" id="GVI-yA-Bdp"/>
-                <constraint firstItem="1I9-BA-liR" firstAttribute="centerX" secondItem="ZTg-uK-7eu" secondAttribute="centerX" id="qh8-dG-LWY"/>
-                <constraint firstItem="1I9-BA-liR" firstAttribute="centerY" secondItem="ZTg-uK-7eu" secondAttribute="centerY" id="xLA-ee-jwP"/>
+                <constraint firstItem="1I9-BA-liR" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" id="2Uo-vf-e1p"/>
+                <constraint firstItem="1I9-BA-liR" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="CIW-wb-waz"/>
+                <constraint firstAttribute="bottom" secondItem="1I9-BA-liR" secondAttribute="bottom" id="nHl-8q-9B5"/>
+                <constraint firstItem="1I9-BA-liR" firstAttribute="centerX" secondItem="gTV-IL-0wX" secondAttribute="centerX" id="vrA-If-4Nw"/>
             </constraints>
             <size key="customSize" width="320" height="263"/>
             <connections>
                 <outlet property="imageView" destination="1I9-BA-liR" id="KVE-Do-0U2"/>
             </connections>
-            <point key="canvasLocation" x="326.63551401869159" y="147.08423326133911"/>
+            <point key="canvasLocation" x="-311.21495327102804" y="-30.45356371490281"/>
         </collectionViewCell>
     </objects>
     <resources>

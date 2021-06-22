@@ -62,11 +62,13 @@ class ViewController: UICollectionViewController {
         // Do any additional setup after loading the view.
         collectionView.dataSource = self.dataSource
         let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.estimatedItemSize = CGSize(width: 200, height: 200)
+//        flowLayout.itemSize = CGSize(width: 195, height: 200)
         flowLayout.minimumLineSpacing = 0.0
         flowLayout.minimumInteritemSpacing = 0.0
         flowLayout.scrollDirection = .vertical
         self.collectionView.collectionViewLayout = flowLayout
+        
+//        flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
 
     }
 
@@ -172,7 +174,13 @@ extension ViewController : NSFetchedResultsControllerDelegate{
 }
 
 extension ViewController : UICollectionViewDelegateFlowLayout{
-    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let numberOfItemsPerRow : CGFloat = 3.0
+        let w : CGFloat = CGFloat(UIScreen.main.bounds.width/numberOfItemsPerRow)
+        let h : CGFloat = w
+        let size = CGSize(width: w, height: h)
+        return size
+    }
     
 }
 
