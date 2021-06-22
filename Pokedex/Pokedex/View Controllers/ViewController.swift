@@ -37,18 +37,37 @@ class ViewController: UICollectionViewController {
     enum Section {
       case main
     }
+    
+    var originalItems : [NSManagedObjectID] {
+        get{
+            return self.fetchedResultsController.fetchedObjects?.compactMap {
+                return $0.objectID
+            } ?? []
+
+        }
+        
+    }
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.collectionView.register(UINib(nibName: "PokemonCollectionViewCell", bundle: .main), forCellWithReuseIdentifier: PokemonCollectionViewCell.identifier)
-        // Do any additional setup after loading the view.
-        collectionView.dataSource = self.dataSource
+        setupCollectionView()
         self.applySnapshot()
         initializeFetchedResultsController()
         self.navigationItem.searchController = searchController
+    }
+    
+    func setupCollectionView(){
+        self.collectionView.register(UINib(nibName: "PokemonCollectionViewCell", bundle: .main), forCellWithReuseIdentifier: PokemonCollectionViewCell.identifier)
+        // Do any additional setup after loading the view.
+        collectionView.dataSource = self.dataSource
+        let flowLayout = UICollectionViewFlowLayout()
+        flowLayout.estimatedItemSize = CGSize(width: 200, height: 200)
+        flowLayout.minimumLineSpacing = 0.0
+        flowLayout.minimumInteritemSpacing = 0.0
+        flowLayout.scrollDirection = .vertical
+        self.collectionView.collectionViewLayout = flowLayout
 
-//        self.applySnapshot()
     }
 
     
@@ -56,7 +75,7 @@ class ViewController: UICollectionViewController {
       var snapshot = NSDiffableDataSourceSnapshot<Section,NSManagedObjectID>()
       snapshot.appendSections([.main])
       snapshot.appendItems([])
-      dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
+      dataSource.apply(snapshot, animatingDifferences: false)
     }
 
 }
@@ -107,7 +126,7 @@ extension ViewController : NSFetchedResultsControllerDelegate{
 //        snapshot.reloadItems(reloadIdentifiers)
 //
 //        let shouldAnimate = self.collectionView.numberOfSections != 0
-        dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>, animatingDifferences: true)
+        dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>, animatingDifferences: false)
     }
     
     // Legacy implementation
@@ -160,35 +179,33 @@ extension ViewController : UICollectionViewDelegateFlowLayout{
 extension ViewController : UISearchControllerDelegate{
     
     
-    
 }
 
 extension ViewController : UISearchResultsUpdating{
     func updateSearchResults(for searchController: UISearchController) {
-        guard let text = searchController.searchBar.text?.lowercased(), let container = dataContainer else{
+        guard let text = searchController.searchBar.text?.lowercased(), let fetched = self.fetchedResultsController.fetchedObjects else{
             return
         }
-        
-        if (text.count >= 2) {
-            self.fetchedResultsController.fetchRequest.predicate = NSPredicate(format: "name CONTAINS[cd] %@",text)
+        var items : [NSManagedObjectID] = []
+        if text.count == 0{
+            items = self.originalItems
         }else{
-            self.fetchedResultsController.fetchRequest.predicate = nil
-        }
-        do {
-            try self.fetchedResultsController.performFetch()
-            
-            guard let dataSource = self.collectionView.dataSource as? UICollectionViewDiffableDataSource<Section, NSManagedObjectID>, let fetched = self.fetchedResultsController.fetchedObjects else {
-                return
-            }
-            var items = fetched.compactMap {
+            let filteredItems = fetched.filter { pokemon in
+                if let name = pokemon.name?.lowercased(){
+                    return name.contains(text)
+                }else{
+                    return false
+                }
+            }.compactMap {
                 return $0.objectID
             }
-
-            var snapshot = NSDiffableDataSourceSnapshot<Section,NSManagedObjectID>()
-            snapshot.appendSections([.main])
-            snapshot.appendItems(items)
-            dataSource.apply(snapshot, animatingDifferences: true)
-        } catch {}
+            items = filteredItems
+        }
+        
+        var snapshot = NSDiffableDataSourceSnapshot<Section,NSManagedObjectID>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(items)
+        dataSource.apply(snapshot, animatingDifferences: true)
 
     }
     
