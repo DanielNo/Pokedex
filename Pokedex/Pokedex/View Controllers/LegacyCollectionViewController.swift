@@ -18,26 +18,7 @@ class LegacyCollectionViewController: UICollectionViewController {
         searchController.searchBar.placeholder = "Search for pokemon"
         return searchController
     }()
-    
-    
-    lazy var dataSource : UICollectionViewDiffableDataSource<Section,NSManagedObjectID> = {
-        let datasource : UICollectionViewDiffableDataSource<Section,NSManagedObjectID> = UICollectionViewDiffableDataSource(collectionView: self.collectionView) { (colView, indexPath, objectID) -> UICollectionViewCell? in
-            let cell = colView.dequeueReusableCell(withReuseIdentifier: PokemonCollectionViewCell.identifier, for: indexPath) as! PokemonCollectionViewCell
-//            print(objectID)
-            let obj = self.dataContainer?.viewContext.object(with: objectID) as! Pokemon
-            let id = obj.id
-//            print(id)
-            cell.imageView.image = UIImage(named: "\(id)")
-            return cell
-        }
         
-        return datasource
-    }()
-    
-    enum Section {
-      case main
-    }
-    
     var filteredItems : [Pokemon] = []
 
     override func viewDidLoad() {
@@ -103,7 +84,7 @@ extension LegacyCollectionViewController : NSFetchedResultsControllerDelegate{
         
     }
     
-    // Section Cahnges
+    // Section Changes
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
         let indexSet = IndexSet(integer: sectionIndex)

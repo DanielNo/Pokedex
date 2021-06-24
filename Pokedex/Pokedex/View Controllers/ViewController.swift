@@ -48,10 +48,26 @@ class ViewController: UICollectionViewController {
         }
         
     }
+    
+    var layout : UICollectionViewCompositionalLayout = {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5),
+                                             heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                              heightDimension: .fractionalWidth(0.5))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize,
+                                                         subitems: [item])
+
+        let section = NSCollectionLayoutSection(group: group)
+        let layout = UICollectionViewCompositionalLayout(section: section)
+        return layout
+    }()
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupStatusBar()
         setupCollectionView()
         self.applySnapshot()
         initializeFetchedResultsController()
@@ -62,16 +78,25 @@ class ViewController: UICollectionViewController {
         self.collectionView.register(UINib(nibName: "PokemonCollectionViewCell", bundle: .main), forCellWithReuseIdentifier: PokemonCollectionViewCell.identifier)
         // Do any additional setup after loading the view.
         collectionView.dataSource = self.dataSource
-        let flowLayout = UICollectionViewFlowLayout()
-//        flowLayout.itemSize = CGSize(width: 195, height: 200)
-        flowLayout.minimumLineSpacing = 0.0
-        flowLayout.minimumInteritemSpacing = 0.0
-        flowLayout.scrollDirection = .vertical
-        self.collectionView.collectionViewLayout = flowLayout
-        
+        self.collectionView.collectionViewLayout = self.layout
+        self.collectionView.backgroundColor = .systemRed
+//        self.searchController.searchBar.backgroundColor = .systemYellow
 //        flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        
 
     }
+    
+    func setupStatusBar(){
+        if #available(iOS 13, *)
+        {
+            let statusBar = UIView(frame: (UIApplication.shared.keyWindow?.windowScene?.statusBarManager?.statusBarFrame)!)
+            statusBar.backgroundColor = UIColor.systemBackground
+            view.addSubview(statusBar)
+//            UIApplication.shared.keyWindow?.addSubview(statusBar)
+        }
+
+    }
+    
 
     
     func applySnapshot(animatingDifferences: Bool = true) {
@@ -132,7 +157,7 @@ extension ViewController : NSFetchedResultsControllerDelegate{
         dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>, animatingDifferences: false)
     }
     
-    // Legacy implementation
+    // Legacy implementation, not needed anymore
 
 //    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
 ////        tableView.beginUpdates()
@@ -175,13 +200,13 @@ extension ViewController : NSFetchedResultsControllerDelegate{
 }
 
 extension ViewController : UICollectionViewDelegateFlowLayout{
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let numberOfItemsPerRow : CGFloat = 3.0
-        let w : CGFloat = CGFloat(UIScreen.main.bounds.width/numberOfItemsPerRow)
-        let h : CGFloat = w
-        let size = CGSize(width: w, height: h)
-        return size
-    }
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        let numberOfItemsPerRow : CGFloat = 3.0
+//        let w : CGFloat = CGFloat(UIScreen.main.bounds.width/numberOfItemsPerRow)
+//        let h : CGFloat = w
+//        let size = CGSize(width: w, height: h)
+//        return size
+//    }
     
 }
 
