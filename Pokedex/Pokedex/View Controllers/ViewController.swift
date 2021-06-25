@@ -19,24 +19,8 @@ class ViewController: UICollectionViewController {
         return searchController
     }()
     
-    
-    lazy var dataSource : UICollectionViewDiffableDataSource<Section,NSManagedObjectID> = {
-        let datasource : UICollectionViewDiffableDataSource<Section,NSManagedObjectID> = UICollectionViewDiffableDataSource(collectionView: self.collectionView) { (colView, indexPath, objectID) -> UICollectionViewCell? in
-            let cell = colView.dequeueReusableCell(withReuseIdentifier: PokemonCollectionViewCell.identifier, for: indexPath) as! PokemonCollectionViewCell
-//            print(objectID)
-            let obj = self.dataContainer?.viewContext.object(with: objectID) as! Pokemon
-            let id = obj.id
-//            print(id)
-            cell.imageView.image = UIImage(named: "\(id)")
-            cell.backgroundColor = .systemRed
-            return cell
-        }
-        
-        return datasource
-    }()
-    
-    enum Section {
-      case main
+    enum Section : Int {
+        case main
     }
     
     var originalItems : [NSManagedObjectID] {
@@ -46,44 +30,93 @@ class ViewController: UICollectionViewController {
             } ?? []
 
         }
-        
     }
     
-    var layout : UICollectionViewCompositionalLayout = {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5),
-                                             heightDimension: .fractionalHeight(1.0))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+    lazy var dataSource : UICollectionViewDiffableDataSource<Section,NSManagedObjectID> = {
+        let datasource : UICollectionViewDiffableDataSource<Section,NSManagedObjectID> = UICollectionViewDiffableDataSource(collectionView: self.collectionView) { (colView, indexPath, objectID) -> UICollectionViewCell? in
+                let cell = colView.dequeueReusableCell(withReuseIdentifier: PokemonCollectionViewCell.identifier, for: indexPath) as! PokemonCollectionViewCell
+    //            print(objectID)
+                let obj = self.dataContainer?.viewContext.object(with: objectID) as! Pokemon
+                let id = obj.id
+    //            print(id)
+                cell.imageView.image = UIImage(named: "\(id)")
+                cell.backgroundColor = .systemRed
+                return cell
+        }
+        return datasource
+    }()
 
+    let reuseID = "reuseId"
+//    static let categoryHeaderId = "categoryHeaderId"
+
+    // Use .absolute for exact pixel values
+    // Use .fractionalWidth & .fractionalHeight for percentage of screen size.
+    var layout : UICollectionViewCompositionalLayout = {
+        
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.33),
+                                              heightDimension: .fractionalHeight(1))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize,supplementaryItems: [])
+        item.contentInsets = NSDirectionalEdgeInsets(top: 0.0, leading: 0.0, bottom: 0.0, trailing: 0.0)
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                              heightDimension: .fractionalWidth(0.5))
+                                               heightDimension: .absolute(150))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize,
                                                          subitems: [item])
+        group.supplementaryItems = []
+//        group.supplementaryItems = UICollectionReusableView
 
         let section = NSCollectionLayoutSection(group: group)
+        
+        section.boundarySupplementaryItems = [.init(layoutSize: .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
+        
         let layout = UICollectionViewCompositionalLayout(section: section)
         return layout
     }()
+    
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupStatusBar()
         setupCollectionView()
+        configureHeader()
         self.applySnapshot()
         initializeFetchedResultsController()
         self.navigationItem.searchController = searchController
     }
     
+    func configureHeader(){
+        self.dataSource.supplementaryViewProvider = { (
+            collectionView: UICollectionView,
+            kind: String,
+            indexPath: IndexPath) -> UICollectionReusableView? in
+
+            let header: PokemonTitleCollectionReusableView = self.collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: self.reuseID, for: indexPath) as! PokemonTitleCollectionReusableView
+            header.backgroundColor = .lightGray
+
+//            if let section = self.currentSnapshot?.sectionIdentifiers[indexPath.section] {
+//                header.label.text = "\(section.headerItem.titleHeader)"
+//            }
+            return header
+        }
+
+        
+    }
+    
+    
     func setupCollectionView(){
         self.collectionView.register(UINib(nibName: "PokemonCollectionViewCell", bundle: .main), forCellWithReuseIdentifier: PokemonCollectionViewCell.identifier)
-        // Do any additional setup after loading the view.
+        self.collectionView.register(PokemonTitleCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: self.reuseID)
         collectionView.dataSource = self.dataSource
         self.collectionView.collectionViewLayout = self.layout
         self.collectionView.backgroundColor = .systemRed
 //        self.searchController.searchBar.backgroundColor = .systemYellow
-//        flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-        
-
+    }
+    
+    func applySnapshot(animatingDifferences: Bool = true) {
+      var snapshot = NSDiffableDataSourceSnapshot<Section,NSManagedObjectID>()
+      snapshot.appendSections([.main])
+      snapshot.appendItems([])
+      dataSource.apply(snapshot, animatingDifferences: false)
     }
     
     func setupStatusBar(){
@@ -96,16 +129,18 @@ class ViewController: UICollectionViewController {
         }
 
     }
-    
 
-    
-    func applySnapshot(animatingDifferences: Bool = true) {
-      var snapshot = NSDiffableDataSourceSnapshot<Section,NSManagedObjectID>()
-      snapshot.appendSections([.main])
-      snapshot.appendItems([])
-      dataSource.apply(snapshot, animatingDifferences: false)
+}
+
+extension ViewController {
+    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: self.reuseID, for: indexPath) as! PokemonTitleCollectionReusableView
+        headerView.textLabel.text = "my header"
+        
+        return headerView
     }
-
+    
+    
 }
 
 extension ViewController : NSFetchedResultsControllerDelegate{
@@ -156,57 +191,6 @@ extension ViewController : NSFetchedResultsControllerDelegate{
 //        let shouldAnimate = self.collectionView.numberOfSections != 0
         dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>, animatingDifferences: false)
     }
-    
-    // Legacy implementation, not needed anymore
-
-//    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-////        tableView.beginUpdates()
-//    }
-//
-//    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-////        tableView.endUpdates()
-//    }
-    
-    // Row Changes (optional methods)
-    /*
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-        switch type {
-        case .delete:
-//            self.tableView.deleteRows(at: [indexPath!], with: .fade)
-        case .insert:
-//            self.tableView.insertRows(at: [newIndexPath!], with: .fade)
-        case .move:
-//            self.tableView.moveRow(at: indexPath!, to: newIndexPath!)
-        case .update:
-//            self.tableView.reloadRows(at: [indexPath!], with: .fade)
-        @unknown default:
-            print("unknown future case")
-        }
-    }
-    
-    // Section Cahnges
-    
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
-        let indexSet = IndexSet(integer: sectionIndex)
-        switch type {
-        case .insert: tableView.insertSections(indexSet, with: .fade)
-        case .delete: tableView.deleteSections(indexSet, with: .fade)
-        case .update, .move:
-            fatalError("Invalid change type in controller(_:didChange:atSectionIndex:for:). Only .insert or .delete should be possible.")
-        }
-    }
- */
-
-}
-
-extension ViewController : UICollectionViewDelegateFlowLayout{
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let numberOfItemsPerRow : CGFloat = 3.0
-//        let w : CGFloat = CGFloat(UIScreen.main.bounds.width/numberOfItemsPerRow)
-//        let h : CGFloat = w
-//        let size = CGSize(width: w, height: h)
-//        return size
-//    }
     
 }
 

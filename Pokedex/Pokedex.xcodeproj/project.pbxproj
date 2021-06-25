@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9A036DF92686583300FE0CC8 /* PokemonTitleCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A036DF72686583300FE0CC8 /* PokemonTitleCollectionReusableView.swift */; };
 		9A06CF18265452C0008ACE8D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A06CF17265452C0008ACE8D /* AppDelegate.swift */; };
 		9A06CF1A265452C0008ACE8D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A06CF19265452C0008ACE8D /* SceneDelegate.swift */; };
 		9A06CF1C265452C0008ACE8D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A06CF1B265452C0008ACE8D /* ViewController.swift */; };
@@ -44,6 +45,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9A036DF72686583300FE0CC8 /* PokemonTitleCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonTitleCollectionReusableView.swift; sourceTree = "<group>"; };
 		9A06CF14265452BF008ACE8D /* Pokedex.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pokedex.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A06CF17265452C0008ACE8D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9A06CF19265452C0008ACE8D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 			children = (
 				9AAF43D1265D7369005CE4AC /* PokemonCollectionViewCell.swift */,
 				9AAF43D2265D7369005CE4AC /* PokemonCollectionViewCell.xib */,
+				9A036DF72686583300FE0CC8 /* PokemonTitleCollectionReusableView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -333,6 +336,7 @@
 				9A4FFA1826827BAE006F90FC /* LegacyCollectionViewController.swift in Sources */,
 				9A06CF18265452C0008ACE8D /* AppDelegate.swift in Sources */,
 				9A06CF4E265453D1008ACE8D /* Dependencies.swift in Sources */,
+				9A036DF92686583300FE0CC8 /* PokemonTitleCollectionReusableView.swift in Sources */,
 				9A06CF1A265452C0008ACE8D /* SceneDelegate.swift in Sources */,
 				9A06CF53265453FC008ACE8D /* DataContainer.swift in Sources */,
 				9AB882A12655996C00630E6B /* Type.swift in Sources */,
