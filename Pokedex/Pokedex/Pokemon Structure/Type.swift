@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Type : Int16{
+public enum Type : Int16,CaseIterable{
     case none = -1
     case normal = 0
     case fire = 1
@@ -28,6 +28,8 @@ public enum Type : Int16{
 //    case dark = 16
 //    case steel = 17
     case all = 99
+    
+    
 }
 
 extension Type{

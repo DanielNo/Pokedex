@@ -32,13 +32,11 @@ class ViewController: UICollectionViewController {
         }
     }
     
-    lazy var dataSource : UICollectionViewDiffableDataSource<Section,NSManagedObjectID> = {
-        let datasource : UICollectionViewDiffableDataSource<Section,NSManagedObjectID> = UICollectionViewDiffableDataSource(collectionView: self.collectionView) { (colView, indexPath, objectID) -> UICollectionViewCell? in
+    lazy var dataSource : UICollectionViewDiffableDataSource<Type,NSManagedObjectID> = {
+        let datasource : UICollectionViewDiffableDataSource<Type,NSManagedObjectID> = UICollectionViewDiffableDataSource(collectionView: self.collectionView) { (colView, indexPath, objectID) -> UICollectionViewCell? in
                 let cell = colView.dequeueReusableCell(withReuseIdentifier: PokemonCollectionViewCell.identifier, for: indexPath) as! PokemonCollectionViewCell
-    //            print(objectID)
                 let obj = self.dataContainer?.viewContext.object(with: objectID) as! Pokemon
                 let id = obj.id
-    //            print(id)
                 cell.imageView.image = UIImage(named: "\(id)")
                 cell.backgroundColor = .systemRed
                 return cell
@@ -47,7 +45,6 @@ class ViewController: UICollectionViewController {
     }()
 
     let reuseID = "reuseId"
-//    static let categoryHeaderId = "categoryHeaderId"
 
     // Use .absolute for exact pixel values
     // Use .fractionalWidth & .fractionalHeight for percentage of screen size.
@@ -89,32 +86,27 @@ class ViewController: UICollectionViewController {
             collectionView: UICollectionView,
             kind: String,
             indexPath: IndexPath) -> UICollectionReusableView? in
-
-            let header: PokemonTitleCollectionReusableView = self.collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: self.reuseID, for: indexPath) as! PokemonTitleCollectionReusableView
+            let header: PokemonTitleCollectionReusableView = self.collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: PokemonTitleCollectionReusableView.identifier, for: indexPath) as! PokemonTitleCollectionReusableView
             header.backgroundColor = .lightGray
-
-//            if let section = self.currentSnapshot?.sectionIdentifiers[indexPath.section] {
-//                header.label.text = "\(section.headerItem.titleHeader)"
-//            }
+            let castedInt = Int16(indexPath.section-1)
+            header.textLabel.text = Type(rawValue: castedInt)?.description
             return header
         }
-
-        
     }
     
     
     func setupCollectionView(){
         self.collectionView.register(UINib(nibName: "PokemonCollectionViewCell", bundle: .main), forCellWithReuseIdentifier: PokemonCollectionViewCell.identifier)
-        self.collectionView.register(PokemonTitleCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: self.reuseID)
+        self.collectionView.register(PokemonTitleCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: PokemonTitleCollectionReusableView.identifier)
         collectionView.dataSource = self.dataSource
         self.collectionView.collectionViewLayout = self.layout
         self.collectionView.backgroundColor = .systemRed
-//        self.searchController.searchBar.backgroundColor = .systemYellow
     }
     
     func applySnapshot(animatingDifferences: Bool = true) {
-      var snapshot = NSDiffableDataSourceSnapshot<Section,NSManagedObjectID>()
-      snapshot.appendSections([.main])
+      var snapshot = NSDiffableDataSourceSnapshot<Type,NSManagedObjectID>()
+        let cases = Type.allCases
+      snapshot.appendSections(cases)
       snapshot.appendItems([])
       dataSource.apply(snapshot, animatingDifferences: false)
     }
@@ -172,7 +164,7 @@ extension ViewController : NSFetchedResultsControllerDelegate{
     // Simplest way to implement this method is to apply the "snapshot variable" to the collectionview's datasource.
     @available(iOS 13.0, *)
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        guard let dataSource = self.collectionView.dataSource as? UICollectionViewDiffableDataSource<Section, NSManagedObjectID> else {
+        guard let dataSource = self.collectionView.dataSource as? UICollectionViewDiffableDataSource<Type, NSManagedObjectID> else {
             assertionFailure("The data source has not implemented snapshot support while it should")
             return
         }
@@ -189,7 +181,7 @@ extension ViewController : NSFetchedResultsControllerDelegate{
 //        snapshot.reloadItems(reloadIdentifiers)
 //
 //        let shouldAnimate = self.collectionView.numberOfSections != 0
-        dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Section, NSManagedObjectID>, animatingDifferences: false)
+        dataSource.apply(snapshot as NSDiffableDataSourceSnapshot<Type, NSManagedObjectID>, animatingDifferences: false)
     }
     
 }
@@ -204,9 +196,9 @@ extension ViewController : UISearchResultsUpdating{
         guard let text = searchController.searchBar.text?.lowercased(), let fetched = self.fetchedResultsController.fetchedObjects else{
             return
         }
-        var items : [NSManagedObjectID] = []
+        var items : [Pokemon] = []
         if text.count == 0{
-            items = self.originalItems
+//            items = self.originalItems
         }else{
             let filteredItems = fetched.filter { pokemon in
                 if let name = pokemon.name?.lowercased(){
@@ -214,15 +206,21 @@ extension ViewController : UISearchResultsUpdating{
                 }else{
                     return false
                 }
-            }.compactMap {
-                return $0.objectID
             }
             items = filteredItems
         }
         
-        var snapshot = NSDiffableDataSourceSnapshot<Section,NSManagedObjectID>()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(items)
+        var snapshot = NSDiffableDataSourceSnapshot<Type,NSManagedObjectID>()
+        snapshot.appendSections(Type.allCases)
+        
+        for type in Type.allCases{
+            let itemTypes = items.filter { poke in
+                return poke.type == type.rawValue
+            }.compactMap {
+                return $0.objectID
+            }
+            snapshot.appendItems(itemTypes, toSection: type)
+        }
         dataSource.apply(snapshot, animatingDifferences: true)
 
     }
