@@ -19,9 +19,9 @@ class ViewController: UICollectionViewController {
         return searchController
     }()
     
-    enum Section : Int {
-        case main
-    }
+//    enum Section : Int {
+//        case main
+//    }
     
     var originalItems : [NSManagedObjectID] {
         get{
@@ -44,8 +44,6 @@ class ViewController: UICollectionViewController {
         return datasource
     }()
 
-    let reuseID = "reuseId"
-
     // Use .absolute for exact pixel values
     // Use .fractionalWidth & .fractionalHeight for percentage of screen size.
     var layout : UICollectionViewCompositionalLayout = {
@@ -66,20 +64,9 @@ class ViewController: UICollectionViewController {
         section.boundarySupplementaryItems = [.init(layoutSize: .init(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)]
         
         let layout = UICollectionViewCompositionalLayout(section: section)
+        layout.configuration.scrollDirection = .vertical
         return layout
     }()
-    
-
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupStatusBar()
-        setupCollectionView()
-        configureHeader()
-        self.applySnapshot()
-        initializeFetchedResultsController()
-        self.navigationItem.searchController = searchController
-    }
     
     func configureHeader(){
         self.dataSource.supplementaryViewProvider = { (
@@ -93,7 +80,16 @@ class ViewController: UICollectionViewController {
             return header
         }
     }
-    
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupStatusBar()
+        setupCollectionView()
+        configureHeader()
+        self.applySnapshot()
+        initializeFetchedResultsController()
+        self.navigationItem.searchController = searchController
+    }
     
     func setupCollectionView(){
         self.collectionView.register(UINib(nibName: "PokemonCollectionViewCell", bundle: .main), forCellWithReuseIdentifier: PokemonCollectionViewCell.identifier)
@@ -119,7 +115,6 @@ class ViewController: UICollectionViewController {
             view.addSubview(statusBar)
 //            UIApplication.shared.keyWindow?.addSubview(statusBar)
         }
-
     }
 
 }
@@ -128,7 +123,6 @@ extension ViewController {
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: self.reuseID, for: indexPath) as! PokemonTitleCollectionReusableView
         headerView.textLabel.text = "my header"
-        
         return headerView
     }
     
