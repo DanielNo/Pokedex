@@ -121,7 +121,7 @@ class ViewController: UICollectionViewController {
 
 extension ViewController {
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: self.reuseID, for: indexPath) as! PokemonTitleCollectionReusableView
+        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PokemonCollectionViewCell.identifier, for: indexPath) as! PokemonTitleCollectionReusableView
         headerView.textLabel.text = "my header"
         return headerView
     }
